@@ -29,7 +29,9 @@ function process {
     sizes=$(convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol" -trim  info:- 2>/dev/null)
     trimmedSize=$(echo $sizes|awk '{ print $3 }')
     symbolWidth=$(echo $trimmedSize| awk -F'x' '{ print $1 }')
-    Width=$(printf "%01X" "$symbolWidth")
+    # Width=$(printf "%01X" "$symbolWidth")
+    Width2=$(printf "%01X" $(($symbolWidth+1)))
+    # echo original $Width plus one $Width2
 
     symbolHeight=$(echo $trimmedSize| awk -F'x' '{ print $2 }')
     canvas=$(echo $sizes|awk '{ print $4 }')
@@ -45,7 +47,7 @@ function process {
         cYShift=4
       fi
       # crop $cYShift from top, $cXShift from left, $symbolWidth, $symbolHeight<=16 and save   (-crop +top+left +repage)
-      convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cYShift+$cXShift +repage BMP/"$hex"_"$Width""$cYShift".$outFormat
+      convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cYShift+$cXShift +repage BMP/"$hex"_"$Width2""$cYShift".$outFormat
     fi
 }
 
