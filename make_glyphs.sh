@@ -47,7 +47,7 @@ function process {
         cYShift=4
       fi
       # crop $cYShift from top, $cXShift from left, $symbolWidth, $symbolHeight<=16 and save   (-crop +top+left +repage)
-      convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cYShift+$cXShift +repage BMP/"$hex"_"$Width2""$cYShift".$outFormat
+      convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cYShift+$cXShift +repage -set page 16x16+0+0 -flatten   BMP/"$hex"_"$Width2""$cYShift".$outFormat
     fi
 }
 
