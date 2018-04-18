@@ -8,7 +8,7 @@ font=ArialHebrew-Bold-02.ttf
 # font="./Sudo.ttf"
 rm -rf ./BMP/
 mkdir ./BMP
-
+echo '{"header":[78,69,90,75,8,255,255,255,255,255,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255],"version":8}' > ./BMP/font_info.json
 
 
 function symbolsRange {
