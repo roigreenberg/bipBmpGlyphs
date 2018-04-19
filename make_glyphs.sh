@@ -30,7 +30,7 @@ function process {
     trimmedSize=$(echo $sizes|awk '{ print $3 }')
     symbolWidth=$(echo $trimmedSize| awk -F'x' '{ print $1 }')
     # Width=$(printf "%01X" "$symbolWidth")
-    Width2=$(printf "%01X" $(($symbolWidth+1)))
+    Width2=$(printf "%01X" $(($symbolWidth)))
     # echo original $Width plus one $Width2
 
     symbolHeight=$(echo $trimmedSize| awk -F'x' '{ print $2 }')
@@ -47,7 +47,7 @@ function process {
         cYShift=4
       fi
       # crop $cYShift from top, $cXShift from left, $symbolWidth, $symbolHeight<=16 and save   (-crop +top+left +repage)
-      convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cYShift+$cXShift +repage -set page 16x16+0+0 -flatten   BMP/"$hex"_"$Width2""$cYShift".$outFormat
+      convert -background black -fill white -pointsize $fontsize -gravity center +antialias -font $font label:"$currentSymbol"  -crop 16x16+0+0 +repage -set page 16x16+0+0 -flatten -colors 2 +dither -type bilevel  BMP/"$hex"_"$Width2""$cYShift".$outFormat
     fi
 }
 
