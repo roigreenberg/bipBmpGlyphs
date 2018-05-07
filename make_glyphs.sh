@@ -35,7 +35,7 @@ function process {
     # echo $1 $2
     currentSymbol=$1
     symbolCode=$2
-    sizes=$(convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol" -trim  info:- 2>/dev/null)
+    sizes=$(convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol" -bordercolor black -border 1x1 -trim  info:- 2>/dev/null)
     trimmedSize=$(echo $sizes|awk '{ print $3 }')
     symbolWidth=$(echo $trimmedSize| awk -F'x' '{ print $1 }')
     # Width=$(printf "%01X" "$symbolWidth")
@@ -68,7 +68,7 @@ function process {
       #         pnmdepth 4 | ppm2bmp > image.bmp
       # https://www.imagemagick.org/Usage/formats/#bmp
 
-      convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cXShift+$top -set page 16x16+0+0 -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2""$cYShift".bmp
+      convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -bordercolor black -border 1x1 -crop 16x16+$cXShift+$top -set page 16x16+0+0 -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2""$cYShift".bmp
 
     fi
 }
@@ -86,4 +86,8 @@ symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
 ############ askii
-symbolsRange "0x21" "0x7F"
+symbolsRange "0x21" "0x29"
+# 5c "\" causing error ??? escaping problem
+# 2a - the same
+symbolsRange "0x2B" "0x5B"
+symbolsRange "0x5D" "0x5B"
