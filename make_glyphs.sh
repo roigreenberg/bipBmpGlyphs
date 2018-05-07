@@ -65,8 +65,10 @@ function process {
       #         pnmdepth 4 | ppm2bmp > image.bmp
       # https://www.imagemagick.org/Usage/formats/#bmp
 
-      convert $commonParams label:"$currentSymbol"  $borderParams -crop 16x16+$cXShift+$top -set page 16x16+0+0 -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2""$topHex".bmp
-      convert $commonParams label:"$currentSymbol"  $borderParams -crop 16x16+$cXShift+0 -set page 16x16+0+0 -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2"0.bmp
+      convert $commonParams label:"$currentSymbol"  $borderParams -crop 16x16+$cXShift+$top -set page 16x16+0+0 \
+        -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2""$topHex".bmp
+      convert $commonParams label:"$currentSymbol"  $borderParams -crop 16x16+$cXShift+0 -set page 16x16+0+0 \
+        -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2"0.bmp
 
     fi
 }
