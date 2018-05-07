@@ -48,35 +48,42 @@ function process {
     cYShift=$(echo $canvas| awk -F'[+x]' '{ print $4 }')
     # top=$(($cYShift-2))
     top=0
+    # crop from the top isn't working very well yet....
 
 
     if [[ "$trimmedSize" = '1x1' ]]; then
       echo $symbolCode 'no glyph'
     else
-      echo $symbolCode "( $symbolWidth x $symbolHeight )"  shifted $cXShift right and $cYShift down $currentSymbol
+      echo $symbolCode "( $symbolWidth x $symbolHeight )"   $currentSymbol
+      # shifted $cXShift right and $cYShift down
       # echo $symbolCode "($symbolWidth x $symbolHeight)" $currentSymbol
       if (( $cYShift > 4 )); then
         cYShift=4
       fi
-      # crop $cYShift from top, $cXShift from left, $symbolWidth, $symbolHeight<=16 and save   (-crop +top+left +repage)
-      # convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cXShift+$top  -set page 16x16+0+0 -flatten -colors 2 +dither -type bilevel  BMP/"$hex"_"$Width2""$cYShift".$outFormat
-      # convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cXShift+$top  -set page 16x16+0+0 -flatten -colors 2 +dither -type bilevel  MONO:BMP/tempbindata.bin
-      convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cXShift+$top -set page 16x16+0+0 -flatten -colors 2 +dither -type bilevel  MONO:BMP/"$hex"_"$Width2""$cYShift".bin
-      convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cXShift+$top -set page 16x16+0+0 -flatten -colors 2 +dither -type bilevel  PNG:BMP/"$hex"_"$Width2""$cYShift".png
-      # write1bitbmp BMP/tempbindata.bin BMP/"$hex"_"$Width2""$cYShift".$outFormat
+
+      # IM can not produce BMP's at depth levels other than 8.  However you can
+      #   use NetPBM image processing set to do the final conversion to other depth
+      #   levels (This needs at least a Q16 version of IM)...
+      #       convert image +matte -colors 16 ppm:- |\
+      #         pnmdepth 4 | ppm2bmp > image.bmp
+      # https://www.imagemagick.org/Usage/formats/#bmp
+
+      convert -background black -fill white -pointsize $fontsize -gravity West +antialias -font $font label:"$currentSymbol"  -crop 16x16+$cXShift+$top -set page 16x16+0+0 -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2""$cYShift".bmp
+
     fi
 }
 
 
-############ Herbew start
-# symbolsRange "0x0591" "0x05C7"
-# symbolsRange "0x05D0" "0x05EA"
-# symbolsRange "0xFB1D" "0xFB36"
+############ Hebrew start
+symbolsRange "0x0591" "0x05C7"
+symbolsRange "0x05D0" "0x05EA"
+symbolsRange "0xFB1D" "0xFB36"
 symbolsRange "0xFB38" "0xFB3C"
-# symbolsRange "0xFB3E" "0xFB3E"
-# symbolsRange "0xFB40" "0xFB41"
-# symbolsRange "0xFB43" "0xFB44"
-# symbolsRange "0xFB46" "0xFB4F"
+symbolsRange "0xFB3E" "0xFB3E"
+symbolsRange "0xFB40" "0xFB41"
+symbolsRange "0xFB43" "0xFB44"
+symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
-symbolsRange "0x30" "0x3F"
+############ askii
+symbolsRange "0x21" "0x7F"
