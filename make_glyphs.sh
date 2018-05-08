@@ -64,8 +64,7 @@ function process {
     # top=$cYShift
     top=$(($cYShift-0))
     topHex=$(printf "%01X" $top)
-
-    #  crop from the top isn't working very well yet....
+    # TODO find out a magick correction number to decrease topHex parameter (last digit in filename)
 
       # IM can not produce BMP's at depth levels other than 8.  However you can
       #   use NetPBM image processing set to do the final conversion to other depth
@@ -94,19 +93,12 @@ function process {
 # symbolsRange "0xFB3E" "0xFB3E"
 # symbolsRange "0xFB40" "0xFB41"
 # symbolsRange "0xFB43" "0xFB44"
-# symbolsRange "0xFB46" "0xFB4F"
+symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
 ############ askii
-# symbolsRange "0x29" "0x2B"
-# symbolsRange "0x5B" "0x5D"
-symbolsRange "0x30" "0x31"
-symbolsRange "0x32" "0x33" 21
-symbolsRange "0x34" "0x35" 22
-symbolsRange "0x36" "0x37" 23
-symbolsRange "0x38" "0x39" 24
-
-# 5c "\" causing error ??? escaping problem
-# 2a - the same
-# symbolsRange "0x2B" "0x5B" 22
-# symbolsRange "0x5D" "0x5B" 23
+symbolsRange "0x21" "0x2F" 22 Arial_Rounded_Bold.ttf
+symbolsRange "0x30" "0x39" 22 Arial_Rounded_Bold.ttf
+symbolsRange "0x40" "0x7E" 22 Arial_Rounded_Bold.ttf
+############ 
+symbolsRange "0xC0" "0x1BF" 18 Arial_Rounded_Bold.ttf
