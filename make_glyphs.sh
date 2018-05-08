@@ -1,5 +1,4 @@
 clear
-# fontsize=18
 fontsize=20
 maxWidth=16
 maxHeight=16
