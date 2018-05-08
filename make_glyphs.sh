@@ -1,3 +1,4 @@
+clear
 # fontsize=18
 fontsize=20
 maxWidth=16
@@ -9,10 +10,8 @@ font=ArialHebrew-Bold-02.ttf
 
 
 
-# commonParams="-background black -fill white -pointsize $fontsize -gravity West +antialias -font $font"
-commonParams="-background black -fill white -pointsize $fontsize -gravity NorthWest +antialias -font $font"
+commonParams="-background black -fill white -gravity NorthWest +antialias -pointsize $fontsize -font $font"
 borderParams="-bordercolor black -border 1x1"
-echo $commonParams
 rm -rf ./BMP/
 mkdir ./BMP
 echo '{"header":[78,69,90,75,8,255,255,255,255,255,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255],"version":8}' > ./BMP/font_info.json
@@ -24,16 +23,18 @@ function symbolsRange {
   while test "$current" -le "$stop"; do
     hex=$(printf "%04X" "$current")
     symbol=$(printf "\u"$hex)
-    process $symbol $hex
+    echo "$symbol" $hex
+    process "$symbol" $hex
     current=$((current+1))
   done
 }
 
 
 function process {
-    currentSymbol=$1
+    currentSymbol="$1"
     symbolCode=$2
-    sizes=$(convert $commonParams label:"$currentSymbol" $borderParams -trim  info:- 2>/dev/null)
+    label="label:"\\"$currentSymbol"
+    sizes=$(convert $commonParams $label $borderParams -trim  info:- 2>/dev/null)
     trimmedSize=$(echo $sizes|awk '{ print $3 }')
     symbolWidth=$(echo $trimmedSize| awk -F'x' '{ print $1 }')
     Width2=$(printf "%01X" $(($symbolWidth-1)))
@@ -47,9 +48,6 @@ function process {
     if [[ "$trimmedSize" = '1x1' ]]; then
       echo $symbolCode 'no glyph'
     else
-      echo $symbolCode $currentSymbol y: $cYShift   
-      # shifted $cXShift right and $cYShift down
-      # echo $symbolCode "($symbolWidth x $symbolHeight)" $currentSymbol
       # if (( $cYShift > 4 )); then
       #   cYShift=4
       # fi
@@ -71,7 +69,7 @@ function process {
       secondTransform="convert -size 16x16 MONO:-"
       generatedFilename="$hex"_"$Width2""$topHex"
 
-      convert $commonParams label:$currentSymbol $cropPage \
+      convert $commonParams $label $cropPage \
         $firstTransform|$secondTransform BMP3:BMP/$generatedFilename.bmp
 
     fi
@@ -79,21 +77,21 @@ function process {
 
 
 ############ Hebrew start
-# symbolsRange "0x0591" "0x05C7"
+symbolsRange "0x0591" "0x05C7"
 symbolsRange "0x05D0" "0x05EA"
-# symbolsRange "0xFB1D" "0xFB36"
-# symbolsRange "0xFB38" "0xFB3C"
-# symbolsRange "0xFB3E" "0xFB3E"
-# symbolsRange "0xFB40" "0xFB41"
-# symbolsRange "0xFB43" "0xFB44"
-# symbolsRange "0xFB46" "0xFB4F"
+symbolsRange "0xFB1D" "0xFB36"
+symbolsRange "0xFB38" "0xFB3C"
+symbolsRange "0xFB3E" "0xFB3E"
+symbolsRange "0xFB40" "0xFB41"
+symbolsRange "0xFB43" "0xFB44"
+symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
 ############ askii
-symbolsRange "0x29" "0x2F"
-symbolsRange "0x59" "0x5D"
+symbolsRange "0x29" "0x2B"
+symbolsRange "0x5B" "0x5D"
 symbolsRange "0x30" "0x39"
 # 5c "\" causing error ??? escaping problem
 # 2a - the same
-# symbolsRange "0x2B" "0x5B"
-# symbolsRange "0x5D" "0x5B"
+symbolsRange "0x2B" "0x5B"
+symbolsRange "0x5D" "0x5B"
