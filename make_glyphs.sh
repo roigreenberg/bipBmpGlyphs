@@ -9,7 +9,8 @@ font=ArialHebrew-Bold-02.ttf
 
 
 
-commonParams="-background black -fill white -pointsize $fontsize -gravity West +antialias -font $font"
+# commonParams="-background black -fill white -pointsize $fontsize -gravity West +antialias -font $font"
+commonParams="-background black -fill white -pointsize $fontsize -gravity NorthWest +antialias -font $font"
 borderParams="-bordercolor black -border 1x1"
 echo $commonParams
 rm -rf ./BMP/
@@ -53,7 +54,7 @@ function process {
       #   cYShift=4
       # fi
     # top=$cYShift
-    top=$(($cYShift-4))
+    top=$(($cYShift-0))
     topHex=$(printf "%01X" $top)
 
     #  crop from the top isn't working very well yet....
@@ -65,10 +66,13 @@ function process {
       #         pnmdepth 4 | ppm2bmp > image.bmp
       # https://www.imagemagick.org/Usage/formats/#bmp
 
-      convert $commonParams label:"$currentSymbol"  $borderParams -crop 16x16+$cXShift+$top -set page 16x16+0+0 \
-        -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2""$topHex".bmp
-      convert $commonParams label:"$currentSymbol"  $borderParams -crop 16x16+$cXShift+0 -set page 16x16+0+0 \
-        -flatten -colors 4 +dither -type bilevel  MONO:|convert -size 16x16 MONO:-  BMP3:BMP/"$hex"_"$Width2"0.bmp
+      cropPage="$borderParams -crop 16x16+$cXShift+$top -set page 16x16+0+0"
+      firstTransform="-flatten -colors 4 +dither -type bilevel  MONO:"
+      secondTransform="convert -size 16x16 MONO:-"
+      generatedFilename="$hex"_"$Width2""$topHex"
+
+      convert $commonParams label:$currentSymbol $cropPage \
+        $firstTransform|$secondTransform BMP3:BMP/$generatedFilename.bmp
 
     fi
 }
@@ -76,7 +80,7 @@ function process {
 
 ############ Hebrew start
 # symbolsRange "0x0591" "0x05C7"
-# symbolsRange "0x05D0" "0x05EA"
+symbolsRange "0x05D0" "0x05EA"
 # symbolsRange "0xFB1D" "0xFB36"
 # symbolsRange "0xFB38" "0xFB3C"
 # symbolsRange "0xFB3E" "0xFB3E"
