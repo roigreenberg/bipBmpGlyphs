@@ -34,6 +34,24 @@ function symbolsRange {
   done
 }
 
+function codeFromSymbol {
+  printf "%x\n" \'A
+}
+
+function symbolsInString {
+  charsList=$1
+  param3=$2
+  param4=$3
+  fontLocalSize=${param3:-$fontsize}
+  fontLocalName=${param4:-$font}
+  echo using size $fontLocalSize and font $fontLocalName
+  for (( i=0; i<${#charsList}; i++ )); do
+  symbol=${charsList:$i:1}
+  hex=$(printf "%04X" \'$symbol)
+    echo "$symbol" $hex
+    process "$symbol" $hex $fontLocalSize $fontLocalName
+  done
+}
 
 function process {
     currentSymbol="$1"
@@ -92,12 +110,42 @@ function process {
 # symbolsRange "0xFB3E" "0xFB3E"
 # symbolsRange "0xFB40" "0xFB41"
 # symbolsRange "0xFB43" "0xFB44"
-symbolsRange "0xFB46" "0xFB4F"
+# symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
-############ askii
-symbolsRange "0x21" "0x2F" 22 Arial_Rounded_Bold.ttf
-symbolsRange "0x30" "0x39" 22 Arial_Rounded_Bold.ttf
-symbolsRange "0x40" "0x7E" 22 Arial_Rounded_Bold.ttf
-############ 
-symbolsRange "0xC0" "0x1BF" 18 Arial_Rounded_Bold.ttf
+# symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
+symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
+# ############ ascii
+# symbolsRange "0x40" "0x40" 16 Arial_Black.ttf
+# symbolsRange "0x41" "0x56" 18 Arial_Black.ttf
+# symbolsRange "0x57" "0x5F" 18 Arial_Black.ttf
+# symbolsRange "0x60" "0x7E" 17 Arial_Black.ttf
+# ############  Czech
+# symbolsRange "0xC1" "0xC1" 17 Arial_Black.ttf
+# symbolsRange "0xC9" "0xC9" 17 Arial_Black.ttf
+# symbolsRange "0xCD" "0xCD" 17 Arial_Black.ttf
+# symbolsRange "0xD3" "0xD3" 17 Arial_Black.ttf
+# symbolsRange "0xDA" "0xDA" 17 Arial_Black.ttf
+# symbolsRange "0xDD" "0xDD" 17 Arial_Black.ttf
+# symbolsRange "0xE1" "0xE1" 17 Arial_Black.ttf
+# symbolsRange "0xE9" "0xE9" 17 Arial_Black.ttf
+# symbolsRange "0xED" "0xED" 17 Arial_Black.ttf
+# symbolsRange "0xF3" "0xF3" 17 Arial_Black.ttf
+# symbolsRange "0xFA" "0xFA" 17 Arial_Black.ttf
+# symbolsRange "0xFD" "0xFD" 17 Arial_Black.ttf
+# symbolsRange "0x10C" "0x10F" 17 Arial_Black.ttf
+# symbolsRange "0x11A" "0x11B" 17 Arial_Black.ttf
+# symbolsRange "0x147" "0x148" 17 Arial_Black.ttf
+# symbolsRange "0x158" "0x159" 17 Arial_Black.ttf
+# symbolsRange "0x160" "0x161" 17 Arial_Black.ttf
+# symbolsRange "0x164" "0x165" 17 Arial_Black.ttf
+# symbolsRange "0x16E" "0x16F" 17 Arial_Black.ttf
+# symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
+# #################### russian
+# symbolsRange "0x410" "0x42F" 18 Arial_Black.ttf
+# symbolsRange "0x430" "0x44F" 18 Arial_Black.ttf
+# #################### Ukrainian, Serbian, Byelorussian
+# symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
+# symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
+
+symbolsInString QAZWSXEDC 19 Arial_Black.ttf
