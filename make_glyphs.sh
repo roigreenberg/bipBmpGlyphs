@@ -25,11 +25,14 @@ function symbolsRange {
   fontLocalSize=${param3:-$fontsize}
   fontLocalName=${param4:-$font}
   echo using size $fontLocalSize and font $fontLocalName
+  local YCORR=$(getVertCorrection 0 0030 $fontLocalSize $fontLocalName)
+  echo standart shift is $YCORR
   while test "$current" -le "$stop"; do
-    hex=$(printf "%04X" "$current")
-    symbol=$(printf "\u"$hex)
-    echo "$symbol" $hex
-    process "$symbol" $hex $fontLocalSize $fontLocalName
+    hexPadded=$(printf "%04X" "$current")
+    hex=$(printf "%X" "$current")
+    symbol=$(printf "\x$hex")
+    echo "$symbol" $hexPadded $current
+    process "$symbol" $hexPadded $fontLocalSize $fontLocalName
     current=$((current+1))
   done
 }
@@ -45,12 +48,34 @@ function symbolsInString {
   fontLocalSize=${param3:-$fontsize}
   fontLocalName=${param4:-$font}
   echo using size $fontLocalSize and font $fontLocalName
+  local YCORR=$(getVertCorrection 0 0030 $fontLocalSize $fontLocalName)
+  echo standart shift is $YCORR
   for (( i=0; i<${#charsList}; i++ )); do
   symbol=${charsList:$i:1}
-  hex=$(printf "%04X" \'$symbol)
+  hex=$(echo -ne $symbol | iconv -t utf-16be|od -t x1 -A none|sed  's/ //g')
+  # hex=$(printf "%04X" \'$symbol)
+  # don't work under bash 3.2 high sierra default
     echo "$symbol" $hex
     process "$symbol" $hex $fontLocalSize $fontLocalName
   done
+}
+
+function getVertCorrection {
+  # the main idea is to call this function with symbol 0 or any standart capital letter (no diacritics) 
+  # to extract standart vertical shift. It will be used as 4 pix from top and others shifts will be relative 
+  # this one as it used in original fonts
+    currentSymbol="$1"
+    symbolCode=$2
+    fSize=$3
+    fName=$4
+    fParams="-pointsize $fSize -font $fName"
+
+    label="label:"\\"$currentSymbol"
+    sizes=$(convert $commonParams $fParams $label $borderParams -trim  info:- 2>/dev/null)
+    canvas=$(echo $sizes|awk '{ print $4 }')
+    local YShift=$(echo $canvas| awk -F'[+x]' '{ print $4 }')
+    echo $(($YShift-4))
+
 }
 
 function process {
@@ -114,7 +139,7 @@ function process {
 ############ end
 
 # symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
-symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
+# symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
 # ############ ascii
 # symbolsRange "0x40" "0x40" 16 Arial_Black.ttf
 # symbolsRange "0x41" "0x56" 18 Arial_Black.ttf
@@ -148,4 +173,4 @@ symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
 # symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
 # symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
 
-symbolsInString QAZWSXEDC 19 Arial_Black.ttf
+symbolsInString "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ" 19 Arial_Black.ttf
