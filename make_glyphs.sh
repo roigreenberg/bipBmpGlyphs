@@ -19,6 +19,10 @@ function codepoint2Utf {
   local utfDecimal=$1
   local result=''
   local bytes=0
+  if [[ "$utfDecimal" -lt 128 ]]; then
+    result="$(printf '\\x%X' $utfDecimal)"
+    utfDecimal=0
+  fi
   while test "$utfDecimal" -gt 0; do
     result="$(printf '\\x%X' $(($utfDecimal & 63 |128)))$result"
     bytes=$(($bytes+1))
@@ -171,7 +175,7 @@ symbolsRange "0x05D0" "0x05EA"
 symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
-# symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
+symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
 # symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
 # ############ ascii
 # symbolsRange "0x40" "0x40" 16 Arial_Black.ttf
