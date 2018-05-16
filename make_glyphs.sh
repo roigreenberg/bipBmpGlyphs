@@ -128,8 +128,6 @@ function process {
     if [[ "$trimmedSize" = '1x1' ]]; then
         echo $symbolCode 'no glyph'
     else
-        # topCorrected=$(($cYShift-$verticalCorrector))
-        # if (( $topCorrected > 4 )) ; then
          topCorrected=4
         # TODO find out a magick correction number to decrease topHex parameter (last digit in filename)
         top=$(($verticalCorrector+4))
@@ -141,10 +139,15 @@ function process {
           echo $currentSymbol  $symbolHeight $normalizedHeight
           top=$cYShift
           topCorrected=$calculatedShift
-
-          echo '--- standart: '"$(($verticalCorrector+4)) current: $cYShift" 
+        #   echo '--- standart: '"$(($verticalCorrector+4)) current: $cYShift" 
         fi
-        # fi
+        if  (( $top > $cYShift )); then
+          echo '--- less ------'
+          echo $currentSymbol  $symbolHeight $top < $cYShift
+          top=$cYShift
+          topCorrected=$calculatedShift
+        #   echo '--- standart: '"$(($verticalCorrector+4)) current: $cYShift" 
+        fi
         if (( $symbolWidth >16)); then
             symbolWidth=16
         fi
@@ -182,8 +185,8 @@ function process {
 # symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
-# symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
-# symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
+symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
+symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
 # ############ ascii
 # symbolsRange "0x40" "0x40" 16 Arial_Black.ttf
 # symbolsRange "0x41" "0x56" 18 Arial_Black.ttf
@@ -214,9 +217,12 @@ symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
 # symbolsRange "0x410" "0x42F" 18 Arial_Black.ttf
 # symbolsRange "0x430" "0x44F" 18 Arial_Black.ttf
 # #################### Ukrainian, Serbian, Byelorussian
-symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
-symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
+# symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
+# symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
 
-symbolsInString "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ" 19 Arial_Black.ttf
-symbolsInString "абвгдежзийклмнопрстуфхцчшщыэюя" 19 Arial_Black.ttf
-symbolsInString "jklmoz0yfb" 19 Arial_Black.ttf
+symbolsInString "АБВГДЕЗИЙКЛМНОПРСТУФХЦЧЫЭЯ" 19 Arial_Black.ttf
+symbolsInString "ЖШЩЮ" 17 Arial_Black.ttf
+symbolsInString "абвгдезийклмнопрстухцчшщыэюя" 19 Arial_Black.ttf
+symbolsInString "ж" 18 Arial_Black.ttf
+symbolsInString "ф" 17 Arial_Black.ttf
+# symbolsInString "jklmoz0yfb" 19 Arial_Black.ttf
