@@ -133,7 +133,7 @@ function process {
          topCorrected=4
         # TODO find out a magick correction number to decrease topHex parameter (last digit in filename)
         top=$(($verticalCorrector+4))
-        calculatedShift=$(($verticalCorrector+4+4- $cYShift))
+        calculatedShift=$(($cYShift+4-($verticalCorrector+4) ))
         normalizedHeight=$(($cYShift-$top+$symbolHeight))
         # echo $currentSymbol $verticalCorrector $cYShift $top $symbolHeight
         if (( $normalizedHeight >16 )) && (( $normalizedHeight > $symbolHeight )); then
