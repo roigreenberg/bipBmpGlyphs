@@ -128,21 +128,28 @@ function process {
     if [[ "$trimmedSize" = '1x1' ]]; then
         echo $symbolCode 'no glyph'
     else
-        top=$cYShift
-        topCorrected=$(($cYShift-$verticalCorrector))
-        # && (( $symbolHeight < 16 ))
-        echo $currentSymbol $canvas $verticalCorrector $cYShift $topCorrected
+        # topCorrected=$(($cYShift-$verticalCorrector))
         # if (( $topCorrected > 4 )) ; then
-        #  topCorrected=4
+         topCorrected=4
+        # TODO find out a magick correction number to decrease topHex parameter (last digit in filename)
         top=$(($verticalCorrector+4))
+        calculatedShift=$(($verticalCorrector+4+4- $cYShift))
+        normalizedHeight=$(($cYShift-$top+$symbolHeight))
+        # echo $currentSymbol $verticalCorrector $cYShift $top $symbolHeight
+        if (( $normalizedHeight >16 )) && (( $normalizedHeight > $symbolHeight )); then
+          echo '---'
+          echo $currentSymbol  $symbolHeight $normalizedHeight
+          top=$cYShift
+          topCorrected=$calculatedShift
+
+          echo '--- standart: '"$(($verticalCorrector+4)) current: $cYShift" 
+        fi
         # fi
         if (( $symbolWidth >16)); then
             symbolWidth=16
         fi
         Width2=$(printf "%01X" $(($symbolWidth-1)))
-        
         topHex=$(printf "%01X" $topCorrected)
-        # TODO find out a magick correction number to decrease topHex parameter (last digit in filename)
         
         # IM can not produce BMP's at depth levels other than 8.  However you can
         #   use NetPBM image processing set to do the final conversion to other depth
@@ -166,16 +173,16 @@ function process {
 
 ############ Hebrew start
 # symbolsRange "0x0591" "0x05C7"
-symbolsRange "0x05D0" "0x05EA"
+# symbolsRange "0x05D0" "0x05EA"
 # symbolsRange "0xFB1D" "0xFB36"
 # symbolsRange "0xFB38" "0xFB3C"
 # symbolsRange "0xFB3E" "0xFB3E"
 # symbolsRange "0xFB40" "0xFB41"
 # symbolsRange "0xFB43" "0xFB44"
-symbolsRange "0xFB46" "0xFB4F"
+# symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
-symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
+# symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
 # symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
 # ############ ascii
 # symbolsRange "0x40" "0x40" 16 Arial_Black.ttf
@@ -183,32 +190,33 @@ symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
 # symbolsRange "0x57" "0x5F" 18 Arial_Black.ttf
 # symbolsRange "0x60" "0x7E" 17 Arial_Black.ttf
 # ############  Czech
-# symbolsRange "0xC1" "0xC1" 17 Arial_Black.ttf
-# symbolsRange "0xC9" "0xC9" 17 Arial_Black.ttf
-# symbolsRange "0xCD" "0xCD" 17 Arial_Black.ttf
-# symbolsRange "0xD3" "0xD3" 17 Arial_Black.ttf
-# symbolsRange "0xDA" "0xDA" 17 Arial_Black.ttf
-# symbolsRange "0xDD" "0xDD" 17 Arial_Black.ttf
-# symbolsRange "0xE1" "0xE1" 17 Arial_Black.ttf
-# symbolsRange "0xE9" "0xE9" 17 Arial_Black.ttf
-# symbolsRange "0xED" "0xED" 17 Arial_Black.ttf
-# symbolsRange "0xF3" "0xF3" 17 Arial_Black.ttf
-# symbolsRange "0xFA" "0xFA" 17 Arial_Black.ttf
-# symbolsRange "0xFD" "0xFD" 17 Arial_Black.ttf
-# symbolsRange "0x10C" "0x10F" 17 Arial_Black.ttf
-# symbolsRange "0x11A" "0x11B" 17 Arial_Black.ttf
-# symbolsRange "0x147" "0x148" 17 Arial_Black.ttf
-# symbolsRange "0x158" "0x159" 17 Arial_Black.ttf
-# symbolsRange "0x160" "0x161" 17 Arial_Black.ttf
-# symbolsRange "0x164" "0x165" 17 Arial_Black.ttf
-# symbolsRange "0x16E" "0x16F" 17 Arial_Black.ttf
-# symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
+symbolsRange "0xC1" "0xC1" 17 Arial_Black.ttf
+symbolsRange "0xC9" "0xC9" 17 Arial_Black.ttf
+symbolsRange "0xCD" "0xCD" 17 Arial_Black.ttf
+symbolsRange "0xD3" "0xD3" 17 Arial_Black.ttf
+symbolsRange "0xDA" "0xDA" 17 Arial_Black.ttf
+symbolsRange "0xDD" "0xDD" 17 Arial_Black.ttf
+symbolsRange "0xE1" "0xE1" 17 Arial_Black.ttf
+symbolsRange "0xE9" "0xE9" 17 Arial_Black.ttf
+symbolsRange "0xED" "0xED" 17 Arial_Black.ttf
+symbolsRange "0xF3" "0xF3" 17 Arial_Black.ttf
+symbolsRange "0xFA" "0xFA" 17 Arial_Black.ttf
+symbolsRange "0xFD" "0xFD" 17 Arial_Black.ttf
+symbolsRange "0x10C" "0x10F" 17 Arial_Black.ttf
+symbolsRange "0x11A" "0x11B" 17 Arial_Black.ttf
+symbolsRange "0x147" "0x148" 17 Arial_Black.ttf
+symbolsRange "0x158" "0x159" 17 Arial_Black.ttf
+symbolsRange "0x160" "0x161" 17 Arial_Black.ttf
+symbolsRange "0x164" "0x165" 17 Arial_Black.ttf
+symbolsRange "0x16E" "0x16F" 17 Arial_Black.ttf
+symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
 # #################### russian
 # symbolsRange "0x410" "0x42F" 18 Arial_Black.ttf
 # symbolsRange "0x430" "0x44F" 18 Arial_Black.ttf
 # #################### Ukrainian, Serbian, Byelorussian
-# symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
-# symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
+symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
+symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
 
 symbolsInString "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ" 19 Arial_Black.ttf
+symbolsInString "абвгдежзийклмнопрстуфхцчшщыэюя" 19 Arial_Black.ttf
 symbolsInString "jklmoz0yfb" 19 Arial_Black.ttf
