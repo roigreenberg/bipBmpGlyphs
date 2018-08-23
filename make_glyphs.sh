@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 clear
 fontsize=20
 maxWidth=16
@@ -6,14 +7,15 @@ outFormat=bmp
 font=ArialHebrew-Bold-02.ttf
 # font="./Arial_Rounded_Bold.ttf"
 # font="./Sudo.ttf"
+langName=""
 
-
+out_path=$1
 
 commonParams="-background black -fill white -gravity NorthWest +antialias"
 borderParams="-bordercolor black -border 1x1"
-rm -rf ./BMP/
-mkdir ./BMP
-echo '{"header":[78,69,90,75,8,255,255,255,255,255,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255],"version":8}' > ./BMP/font_info.json
+#rm -rf ./$out_path/
+mkdir ./$out_path
+echo '{"header":[78,69,90,75,8,255,255,255,255,255,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255],"version":8}' > ./$out_path/font_info.json
 
 function codepoint2Utf {
   local utfDecimal=$1
@@ -53,7 +55,7 @@ function symbolsRange {
     echo standart shift is $YCORR
     while test "$current" -le "$stop"; do
         hexPadded=$(printf "%04X" "$current")
-        hex=$(printf "%X" "$current")
+        hex=$(printf "%04X" "$current")
         # symbol=$(printf "\x$hex")
         symbol=$(printf $(codepoint2Utf $current))
 
@@ -83,7 +85,7 @@ function symbolsInString {
         # hex=$(printf "%04X" \'$symbol)
         # don't work under bash 3.2 high sierra default
         echo "$symbol" $hex
-        process "$symbol" $hex $YCORR $fontLocalSize $fontLocalName
+        process "$symbol" $hex $YCORR $fontLocalSize $fontLocalName $langName
     done
 }
 
@@ -96,7 +98,6 @@ function getVertCorrection {
     fSize=$3
     fName=$4
     fParams="-pointsize $fSize -font $fName"
-    
     label="label:"\\"$currentSymbol"
     sizes=$(convert $commonParams $fParams $label $borderParams -trim  info:- 2>/dev/null)
     canvas=$(echo $sizes|awk '{ print $4 }')
@@ -112,7 +113,7 @@ function process {
     fSize=$4
     fName=$5
     fParams="-pointsize $fSize -font $fName"
-    
+
     label="label:"\\"$currentSymbol"
     sizes=$(convert $commonParams $fParams $label $borderParams -trim  info:- 2>/dev/null)
     trimmedSize=$(echo $sizes|awk '{ print $3 }')
@@ -123,8 +124,8 @@ function process {
     canvas=$(echo $sizes|awk '{ print $4 }')
     cXShift=$(echo $canvas| awk -F'[+x]' '{ print $3 }')
     cYShift=$(echo $canvas| awk -F'[+x]' '{ print $4 }')
-    
-    
+
+
     if [[ "$trimmedSize" = '1x1' ]]; then
         echo $symbolCode 'no glyph'
     else
@@ -143,13 +144,16 @@ function process {
         fi
         if  (( $top > $cYShift )); then
           echo '--- less ------'
-          echo $currentSymbol  $symbolHeight $top < $cYShift
+          echo $currentSymbol  $symbolHeight $top \< $cYShift
           top=$cYShift
           topCorrected=$calculatedShift
         #   echo '--- standart: '"$(($verticalCorrector+4)) current: $cYShift" 
         fi
         if (( $symbolWidth >16)); then
             symbolWidth=16
+        fi
+        if (( $topCorrected < 0)); then
+            topCorrected=0
         fi
         Width2=$(printf "%01X" $(($symbolWidth-1)))
         topHex=$(printf "%01X" $topCorrected)
@@ -168,7 +172,7 @@ function process {
         generatedFilename="$hex"_"$Width2""$topHex"
         
         convert $commonParams $fParams $label $cropPage \
-        $firstTransform|$secondTransform BMP3:BMP/$generatedFilename.bmp
+        $firstTransform|$secondTransform BMP3:$out_path/$langName/$generatedFilename.bmp
         
     fi
 }
@@ -185,34 +189,34 @@ function process {
 # symbolsRange "0xFB46" "0xFB4F"
 ############ end
 
-symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
-symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
+# symbolsRange "0x21" "0x2F" 18 Arial_Black.ttf
+# symbolsRange "0x30" "0x39" 19 Arial_Black.ttf
 # ############ ascii
 # symbolsRange "0x40" "0x40" 16 Arial_Black.ttf
 # symbolsRange "0x41" "0x56" 18 Arial_Black.ttf
 # symbolsRange "0x57" "0x5F" 18 Arial_Black.ttf
 # symbolsRange "0x60" "0x7E" 17 Arial_Black.ttf
 # ############  Czech
-symbolsRange "0xC1" "0xC1" 17 Arial_Black.ttf
-symbolsRange "0xC9" "0xC9" 17 Arial_Black.ttf
-symbolsRange "0xCD" "0xCD" 17 Arial_Black.ttf
-symbolsRange "0xD3" "0xD3" 17 Arial_Black.ttf
-symbolsRange "0xDA" "0xDA" 17 Arial_Black.ttf
-symbolsRange "0xDD" "0xDD" 17 Arial_Black.ttf
-symbolsRange "0xE1" "0xE1" 17 Arial_Black.ttf
-symbolsRange "0xE9" "0xE9" 17 Arial_Black.ttf
-symbolsRange "0xED" "0xED" 17 Arial_Black.ttf
-symbolsRange "0xF3" "0xF3" 17 Arial_Black.ttf
-symbolsRange "0xFA" "0xFA" 17 Arial_Black.ttf
-symbolsRange "0xFD" "0xFD" 17 Arial_Black.ttf
-symbolsRange "0x10C" "0x10F" 17 Arial_Black.ttf
-symbolsRange "0x11A" "0x11B" 17 Arial_Black.ttf
-symbolsRange "0x147" "0x148" 17 Arial_Black.ttf
-symbolsRange "0x158" "0x159" 17 Arial_Black.ttf
-symbolsRange "0x160" "0x161" 17 Arial_Black.ttf
-symbolsRange "0x164" "0x165" 17 Arial_Black.ttf
-symbolsRange "0x16E" "0x16F" 17 Arial_Black.ttf
-symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
+# symbolsRange "0xC1" "0xC1" 17 Arial_Black.ttf
+# symbolsRange "0xC9" "0xC9" 17 Arial_Black.ttf
+# symbolsRange "0xCD" "0xCD" 17 Arial_Black.ttf
+# symbolsRange "0xD3" "0xD3" 17 Arial_Black.ttf
+# symbolsRange "0xDA" "0xDA" 17 Arial_Black.ttf
+# symbolsRange "0xDD" "0xDD" 17 Arial_Black.ttf
+# symbolsRange "0xE1" "0xE1" 17 Arial_Black.ttf
+# symbolsRange "0xE9" "0xE9" 17 Arial_Black.ttf
+# symbolsRange "0xED" "0xED" 17 Arial_Black.ttf
+# symbolsRange "0xF3" "0xF3" 17 Arial_Black.ttf
+# symbolsRange "0xFA" "0xFA" 17 Arial_Black.ttf
+# symbolsRange "0xFD" "0xFD" 17 Arial_Black.ttf
+# symbolsRange "0x10C" "0x10F" 17 Arial_Black.ttf
+# symbolsRange "0x11A" "0x11B" 17 Arial_Black.ttf
+# symbolsRange "0x147" "0x148" 17 Arial_Black.ttf
+# symbolsRange "0x158" "0x159" 17 Arial_Black.ttf
+# symbolsRange "0x160" "0x161" 17 Arial_Black.ttf
+# symbolsRange "0x164" "0x165" 17 Arial_Black.ttf
+# symbolsRange "0x16E" "0x16F" 17 Arial_Black.ttf
+# symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
 # #################### russian
 # symbolsRange "0x410" "0x42F" 18 Arial_Black.ttf
 # symbolsRange "0x430" "0x44F" 18 Arial_Black.ttf
@@ -220,9 +224,37 @@ symbolsRange "0x17D" "0x17E" 17 Arial_Black.ttf
 # symbolsRange "0x400" "0x40F" 18 Arial_Black.ttf
 # symbolsRange "0x450" "0x45F" 18 Arial_Black.ttf
 
-symbolsInString "АБВГДЕЗИЙКЛМНОПРСТУФХЦЧЫЭЯ" 19 Arial_Black.ttf
-symbolsInString "ЖШЩЮ" 17 Arial_Black.ttf
-symbolsInString "абвгдезийклмнопрстухцчшщыэюя" 19 Arial_Black.ttf
-symbolsInString "ж" 18 Arial_Black.ttf
-symbolsInString "ф" 17 Arial_Black.ttf
+# symbolsInString "АБВГДЕЗИЙКЛМНОПРСТУФХЦЧЫЭЯ" 19 Arial_Black.ttf
+# symbolsInString "ЖШЩЮ" 17 Arial_Black.ttf
+# symbolsInString "абвгдезийклмнопрстухцчшщыэюя" 19 Arial_Black.ttf
+# symbolsInString "ж" 18 Arial_Black.ttf
+# symbolsInString "ф" 17 Arial_Black.ttf
 # symbolsInString "jklmoz0yfb" 19 Arial_Black.ttf
+
+function setOutDir {
+    langName=$1
+    rm -rf ./$out_path/$langName/
+    mkdir ./$out_path/$langName
+    echo $langName
+}
+
+########### Lithuanian
+#setOutDir "Lithuanian"
+#symbolsInString	"ĄąĖėĘęĮįŲųŪūČčŠšŽž" 16 fonts/arial.ttf
+
+############ Arabic start
+#setOutDir "Arabic"
+#symbolsRange "0x0600" "0x06FF" 18 fonts/Tahoma_Regular_font.ttf
+#symbolsRange "0x0750" "0x077F" 19 fonts/tradbdo.ttf
+#symbolsRange "0x08A0" "0x08FF" 19 fonts/tradbdo.ttf
+#symbolsRange "0xFB50" "0xFDFF" 19 fonts/tradbdo.ttf
+
+#setOutDir "Arabic_connected"
+#symbolsRange "0xFE70" "0xFEFF" 16 fonts/Tahoma_Regular_font.ttf
+############# end
+
+########### Georgian
+setOutDir "Georgian"
+#symbolsRange "0x10A0" "0x10FF" 16 fonts/sylfaen.ttf
+symbolsInString	"აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵჶჷჸჹჺ჻ჼჽჾჿ" 18 fonts/sylfaen.ttf
+############# end
