@@ -3,6 +3,8 @@
 Created on Thu Jan 25 11:28:47 2018
 
 @author: 010IvanovVI
+
+Script origin: http://myamazfit.ru/threads/parser-shriftov-amazfit-bip.96/
 """
 
 import os
